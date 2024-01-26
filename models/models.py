@@ -11,21 +11,22 @@ class Model(ABC):
     
     @classmethod
     def view(cls,id):
+        object_exist = {}
         with open(cls.path, encoding='utf-8') as file:
             list = json.load(file)
             for elem in list:
                 if id == elem['id']:
-                    print(json.dumps(elem, indent=4))
-                    break
+                    return json.dumps(elem, indent=4)
+        return f'Id of {cls.__name__} not exist'
 
     @abstractmethod
-    def create():
+    def create(self):
         pass
     
     @abstractmethod
-    def update():
+    def update(self):
         pass
     
     @classmethod
-    def delete():
+    def delete(cls):
         pass
