@@ -7,17 +7,16 @@ class Model(ABC):
     def list(cls):
         
         with open(cls.path, encoding='utf-8') as file:
-            print(file.read())
+            return file.read()
     
     @classmethod
     def view(cls,id):
-        object_exist = {}
         with open(cls.path, encoding='utf-8') as file:
             list = json.load(file)
             for elem in list:
                 if id == elem['id']:
                     return json.dumps(elem, indent=4)
-        return f'Id of {cls.__name__} not exist'
+        return None
 
     @abstractmethod
     def create(self):
