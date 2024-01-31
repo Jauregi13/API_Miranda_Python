@@ -5,6 +5,7 @@ import json
 class Room(Model):
 
     path = 'data/roomsData.json'
+    tableName = 'rooms'
     id = ''
     room_type = ''
     room_number = ''

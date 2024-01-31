@@ -1,22 +1,31 @@
 from abc import ABC, abstractmethod
-import json
+import mysql.connector
+from dotenv import dotenv_values
+from decimal import Decimal
 
-class Model(ABC):
+class Model(ABC):    
 
     @classmethod
-    def list(cls):
+    def list(cls,connection):
+
+        cursor = connection.cursor(dictionary=True)
         
-        with open(cls.path, encoding='utf-8') as file:
-            return file.read()
+        cursor.execute("SELECT * FROM %s" %(cls.tableName))
+
+        result = cursor.fetchall()
+
+        return result
     
     @classmethod
-    def view(cls,id):
-        with open(cls.path, encoding='utf-8') as file:
-            list = json.load(file)
-            for elem in list:
-                if id == elem['id']:
-                    return json.dumps(elem, indent=4)
-        return None
+    def view(cls,id,connection):
+
+        cursor = connection.cursor(dictionary=True)
+        
+        cursor.execute("SELECT * FROM %s WHERE room_id=%s" %(cls.tableName,id))
+
+        result = cursor.fetchone()
+
+        return result
 
     @abstractmethod
     def create(self):
