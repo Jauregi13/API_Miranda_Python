@@ -1,12 +1,13 @@
 
-from models.models import Model
+from .models import Model
 import json
+import random
+from ..utils.validations import validate_numbers, validate_range_numbers
 
 class Room(Model):
 
-    path = 'data/roomsData.json'
     tableName = 'rooms'
-    id = ''
+    room_id = ''
     room_type = ''
     room_number = ''
     description = ''
@@ -16,20 +17,17 @@ class Room(Model):
     amenities = []
     status = ''
 
-    def __init__(self,id=None, room=None):
+    def __init__(self,room):
 
-        if room:
-            self.id = room['id']
-            self.room_type = room['room_type']
-            self.room_number = room['room_number']
-            self.description = room['description']
-            self.price = room['price']
-            self.offer = room['offer']
-            self.cancellation = room['cancellation']
-            self.amenities = room['amenities']
-            self.status = room['status']
-        elif id:
-            self.id = id
+        self.room_id = room['room_id']
+        self.room_type = room['room_type']
+        self.room_number = room['room_number']
+        self.description = room['description']
+        self.price = room['price']
+        self.offer = room['offer']
+        self.cancellation = room['cancellation']
+        self.amenities = room['amenities']
+        self.status = room['status']
 
     def update(self):
         print('-----UPDATE ROOM------------')
@@ -111,36 +109,32 @@ class Room(Model):
 
         print(json.dumps(data,indent=4))
 
-
-    def create(self):
+    @classmethod
+    def create(cls, connection):
         print('-----CREATE ROOM------------')
-        self.room_type = input('Enter the type of room: ')
-        self.room_number = input('Enter the room number: ')
-        self.description = input('Enter the description of the room: ')
 
-        while True:
-            try:
-                price = int(input('Enter the price: '))
-                self.price = price
-                break
-            except ValueError:
-                print('The price is not a valid number. Please enter a valid number')
-        
-        while True:
-            try:
-                offer = int(input('Enter the room offer if it exists; otherwise, write 0: '))
+        id = random.randint(1000,9999)
 
-                if offer >= 0 and offer < 100:
-                    self.offer = offer
-                    break
-                else:
-                    print('The percentage of the room offer must be between 0 and 100')
-            except ValueError:
-                print('The price is not a valid number. Please enter a valid number')
+        cursor = connection.cursor(dictionary=True)
 
-        self.cancellation = input('Introduce the cancellation policy: ')
+        cursor.execute('SELECT name FROM amenities')
 
-        amenitiesString = input('Enter the amenities separated by commas: ')
+        amenities = [amenity['name'] for amenity in cursor.fetchall()]
+
+        result = {
+            "room_id": id,
+            "room_type": input('Enter the type of room: '),
+            "room_number": input('Enter the room number: '),
+            "description": input('Enter the description of the room: '),
+            "price": validate_numbers('price'),
+            "offer": validate_range_numbers('room offer',min=0,max=100),
+            "cancellation": input('Enter the cancellation policy: '),
+            "amenities": ['wifi'],
+            "status": 'Available'
+        }
+    
+        """ 
+       amenitiesString = input('Enter the amenities separated by commas: ')
         
         for amenity in amenitiesString.split(','):
 
@@ -166,7 +160,8 @@ class Room(Model):
             "cancellation": self.cancellation,
             "amenities": self.amenities,
             "status": self.status
-        }
+        }"""
 
-        print(json.dumps(data,indent=4))
+        room = Room(result)
 
+        super(Room,room).create()

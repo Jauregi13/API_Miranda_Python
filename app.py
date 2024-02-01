@@ -1,33 +1,20 @@
 import argparse
 import json
-import random
-import mysql.connector
-from models.Room import Room
-from models.Booking import Booking
-from models.User import User
-from dotenv import dotenv_values
-from utils.utils import decimal_default
+from src.utils.connectionMySQL import connection
+from src.models.Room import Room
+from src.models.Booking import Booking
+from src.models.User import User
+from src.utils.validations import decimal_default
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-action', type=str, required=True, choices=['read-bookings','read-rooms','read-users','read-room',
                     'read-booking','read-user','update-room','create-room'])
 args = parser.parse_args()
 
-
-
-def connection():
-
-    mydb = mysql.connector.connect(
-        host=dotenv_values(".env")["HOST"],
-        user=dotenv_values(".env")["USER"],
-        password=dotenv_values(".env")["PASSWORD"],
-        database=dotenv_values(".env")["DATABASE"]
-    )
-
-    return mydb
+connect = connection()
 
 def readRooms():
-    connect = connection()
+    
     rooms = Room.list(connect)
 
     print(json.dumps(rooms,indent=4,default=decimal_default))
@@ -73,9 +60,8 @@ def updateRoom():
         room.update()
 
 def createRoom():
-    id = random.randint(1000,9999)
-    room = Room(id)
-    room.create()
+    
+    Room.create(connect)
 
 actions = {'read-rooms' : readRooms,'read-bookings' : readBookings,'read-users' : readUsers, 'read-room': roomById,
             'read-booking': bookingById, 'read-user': userById, 'update-room' : updateRoom, 'create-room': createRoom}

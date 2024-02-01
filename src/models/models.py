@@ -29,7 +29,7 @@ class Model(ABC):
 
     @abstractmethod
     def create(self):
-        pass
+        print(self.status)
     
     @abstractmethod
     def update(self):
