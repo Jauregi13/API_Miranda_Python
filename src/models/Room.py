@@ -2,32 +2,38 @@
 from .models import Model
 import json
 import random
-from ..utils.validations import validate_numbers, validate_range_numbers
+from ..utils.validations import (validate_numbers, 
+                                validate_range_numbers, 
+                                validate_value_in_list, 
+                                validate_multiple_values_in_list,
+                                validate_booleans)
 
 class Room(Model):
 
     tableName = 'rooms'
-    room_id = ''
-    room_type = ''
-    room_number = ''
-    description = ''
-    price = 0
-    offer = 0
-    cancellation = ''
-    amenities = []
-    status = ''
+    fields = {
+            'room_id': '',
+            'room_type': '',
+            'room_number': '',
+            'description': '',
+            'price': 0,
+            'offer': 0,
+            'cancellation': '',
+            'amenities': [],
+            'available': False
+    }
 
     def __init__(self,room):
 
-        self.room_id = room['room_id']
-        self.room_type = room['room_type']
-        self.room_number = room['room_number']
-        self.description = room['description']
-        self.price = room['price']
-        self.offer = room['offer']
-        self.cancellation = room['cancellation']
-        self.amenities = room['amenities']
-        self.status = room['status']
+        self.fields['room_id'] = room['room_id']
+        self.fields['room_type'] = room['room_type']
+        self.fields['room_number'] = room['room_number']
+        self.fields['description'] = room['description']
+        self.fields['price'] = room['price']
+        self.fields['offer'] = room['offer']
+        self.fields['cancellation'] = room['cancellation']
+        self.fields['amenities'] = room['amenities']
+        self.fields['available'] = room['available']
 
     def update(self):
         print('-----UPDATE ROOM------------')
@@ -121,47 +127,18 @@ class Room(Model):
 
         amenities = [amenity['name'] for amenity in cursor.fetchall()]
 
-        result = {
+        data = {
             "room_id": id,
-            "room_type": input('Enter the type of room: '),
-            "room_number": input('Enter the room number: '),
+            "room_type": validate_value_in_list('room type',['Single Bed','Double Bed','Double Superior','Suite']),
+            "room_number": validate_range_numbers('room number',min=100,max=999),
             "description": input('Enter the description of the room: '),
             "price": validate_numbers('price'),
             "offer": validate_range_numbers('room offer',min=0,max=100),
             "cancellation": input('Enter the cancellation policy: '),
-            "amenities": ['wifi'],
-            "status": 'Available'
+            "amenities": validate_multiple_values_in_list('amenity',amenities),
+            "available": validate_booleans('available')
         }
-    
-        """ 
-       amenitiesString = input('Enter the amenities separated by commas: ')
-        
-        for amenity in amenitiesString.split(','):
 
-            self.amenities.append(amenity)
-
-        while True:
-
-            status = input('Enter the room status, it can only be Available or Booked: ')
-
-            if status.capitalize() == 'Available' or status.capitalize() == 'Booked':
-                self.status = status.capitalize()
-                break
-            else:
-                print('You have not entered available or booked for the status.')
-        
-        data = {
-            "id": self.id,
-            "room_type": self.room_type,
-            "room_number": self.room_number,
-            "description": self.description,
-            "price": self.price,
-            "offer": self.offer,
-            "cancellation": self.cancellation,
-            "amenities": self.amenities,
-            "status": self.status
-        }"""
-
-        room = Room(result)
+        room = Room(data)
 
         super(Room,room).create()

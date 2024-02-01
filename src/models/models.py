@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
-import mysql.connector
-from dotenv import dotenv_values
-from decimal import Decimal
-
+from ..utils.connectionMySQL import connection
+import json
 class Model(ABC):    
 
     @classmethod
@@ -29,7 +27,20 @@ class Model(ABC):
 
     @abstractmethod
     def create(self):
-        print(self.status)
+
+        connect = connection()
+        cursor = connect.cursor(dictionary=True)
+        columns = ','.join(column for column in self.fields.keys() if self.fields[column] != '')
+        
+        values = ','.join(
+            "'{}'".format(json.dumps(value)) if isinstance(value,list) else 
+           "'{}'".format(value) if isinstance(value,str) else str(value) for value in self.fields.values() if value != '')
+        query = f'INSERT INTO %s (%s) VALUES (%s)' % (self.tableName,columns,values)
+
+        cursor.execute(query)
+        connect.commit()
+
+        print(f'%s inserted succesfully' % (type(self).__name__))
     
     @abstractmethod
     def update(self):
