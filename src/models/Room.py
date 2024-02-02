@@ -1,39 +1,28 @@
 
-from .models import Model
+from .Model import Model
 import json
 import random
-from ..utils.validations import (validate_numbers, 
-                                validate_range_numbers, 
-                                validate_value_in_list, 
-                                validate_multiple_values_in_list,
-                                validate_booleans)
+from typing import Union
+from ..utils.validations import (validate_number, 
+                                validate_value_in_list,
+                                validate_boolean)
+from ..utils.inputs import input_number,input_string,input_list
 
 class Room(Model):
 
     tableName = 'rooms'
-    fields = {
-            'room_id': '',
-            'room_type': '',
-            'room_number': '',
-            'description': '',
-            'price': 0,
-            'offer': 0,
-            'cancellation': '',
-            'amenities': [],
-            'available': False
-    }
 
     def __init__(self,room):
 
-        self.fields['room_id'] = room['room_id']
-        self.fields['room_type'] = room['room_type']
-        self.fields['room_number'] = room['room_number']
-        self.fields['description'] = room['description']
-        self.fields['price'] = room['price']
-        self.fields['offer'] = room['offer']
-        self.fields['cancellation'] = room['cancellation']
-        self.fields['amenities'] = room['amenities']
-        self.fields['available'] = room['available']
+        self.room_id = room['room_id']
+        self.room_type = room['room_type']
+        self.room_number = room['room_number']
+        self.description = room['description']
+        self.price = room['price']
+        self.offer = room['offer']
+        self.cancellation = room['cancellation']
+        self.amenities = room['amenities']
+        self.available = room['available']
 
     
     def getAmenities(connection):
@@ -53,11 +42,12 @@ class Room(Model):
 
         data = {
             "room_id": id,
-            "room_type": validate_value_in_list('room type',list=['Single Bed','Double Bed','Double Superior','Suite'], required=False),
-            "room_number": validate_numbers('room number', required=False),
-            "description": input('Enter the description of the room: '),
-            "price": validate_numbers('price', required=False),
-            "offer": validate_range_numbers('room offer',required=False, min=0,max=100),
+            "room_type": input_list('room type',list=['Single Bed','Double Bed','Double Superior','Suite'], required=True, multiple=False),
+            "room_number": input_number('room number',required=True, min=10,max=20),
+            "description": input_string('description', required=False),
+            "price": input_number('price', required=False),
+            
+            "offer": input_number('room offer',required=False, min=0,max=100),
             "cancellation": input('Enter the cancellation policy: '),
             "amenities": validate_multiple_values_in_list('amenity',required=False,list=cls.getAmenities(connection)),
             "available": validate_booleans('available', required=False)
@@ -71,15 +61,15 @@ class Room(Model):
     def create(cls, connection):
         print('-----CREATE ROOM------------')
 
-        id = random.randint(1000,9999)
+        id = random.randint(10000,99999)
 
         data = {
             "room_id": id,
             "room_type": validate_value_in_list(value_type='room type', list=['Single Bed','Double Bed','Double Superior','Suite'], required=False),
-            "room_number": validate_range_numbers('room number',min=100,max=999, required=False),
+            "room_number": input_number('room number',min=100,max=999, required=True),
             "description": input('Enter the description of the room: '),
-            "price": validate_numbers('price'),
-            "offer": validate_range_numbers('room offer',min=0,max=100),
+            "price": input_number('price',required=True,min=50,max=500),
+            "offer": input_number('room offer',min=0,max=100),
             "cancellation": input('Enter the cancellation policy: '),
             "amenities": validate_multiple_values_in_list('amenity',cls.getAmenities(connection)),
             "available": validate_booleans('available', required=True)

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from ..utils.connectionMySQL import connection
 import json
+
 class Model(ABC):    
 
     @classmethod
@@ -48,13 +49,13 @@ class Model(ABC):
         cursor = connect.cursor(dictionary=True)
         values = ','.join(f"{key} = '{value}'" if isinstance(value,str) else 
         f"{key} = '{json.dumps(value)}'" if isinstance(value,list) else f"{key} = {value}"
-        for key,value in self.fields.items() if value)
+        for key,value in self.__dict__.items() if value)
 
-        id = list(self.fields.keys())[0]
-        where_clause = f"%s = '%s'" % (id,self.fields[id])
+        id = list(self.__dict__.keys())[0]
+
+        where_clause = f"%s = '%s'" % (id,self.__dict__[id])
 
         query = f'UPDATE %s SET %s WHERE %s' % (self.tableName, values,where_clause)
-        print(query)
         cursor.execute(query)
         connect.commit()
 

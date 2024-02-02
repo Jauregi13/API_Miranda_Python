@@ -1,5 +1,5 @@
 
-from .models import Model
+from .Model import Model
 
 class Booking(Model):
 
