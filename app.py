@@ -8,7 +8,7 @@ from src.utils.validations import decimal_default
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-action', type=str, required=True, choices=['read-bookings','read-rooms','read-users','read-room',
-                    'read-booking','read-user','update-room','create-room'])
+                    'read-booking','read-user','update-room','create-room','delete-room'])
 args = parser.parse_args()
 
 connect = connection()
@@ -26,7 +26,7 @@ def readUsers():
     print(User.list())
 
 def roomById():
-    connect = connection()
+
     roomId = input('Introduce id of room: ')
     room = Room.view(roomId,connect)
 
@@ -53,17 +53,30 @@ def userById():
         
 def updateRoom():
     roomId = input('Introduce id of room: ')
-    roomExist = Room.view(roomId)
+    roomExist = Room.view(roomId,connection=connect)
 
     if roomExist:
-        room = Room(json.loads(roomExist))
-        room.update()
+        Room.update(id=roomExist['room_id'],connection=connect)
+    else:
+        print('id of room not exist')
 
 def createRoom():
     
     Room.create(connect)
 
+def deleteRoom():
+    
+    roomId = input('Introduce id of room: ')
+    roomExist = Room.view(roomId,connection=connect)
+
+    if roomExist:
+        Room.delete(id=roomExist['id'])
+    else:
+        print('id of room not exist')
+
+
 actions = {'read-rooms' : readRooms,'read-bookings' : readBookings,'read-users' : readUsers, 'read-room': roomById,
-            'read-booking': bookingById, 'read-user': userById, 'update-room' : updateRoom, 'create-room': createRoom}
+            'read-booking': bookingById, 'read-user': userById, 'update-room' : updateRoom, 'create-room': createRoom,
+            'delete-room': deleteRoom}
 
 actions[args.action]()
