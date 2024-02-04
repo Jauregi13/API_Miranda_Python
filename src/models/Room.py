@@ -3,10 +3,7 @@ from .Model import Model
 import json
 import random
 from typing import Union
-from ..utils.validations import (validate_number, 
-                                validate_value_in_list,
-                                validate_boolean)
-from ..utils.inputs import input_number,input_string,input_list
+from ..utils.inputs import input_number,input_string,input_list,input_boolean
 
 class Room(Model):
 
@@ -42,15 +39,14 @@ class Room(Model):
 
         data = {
             "room_id": id,
-            "room_type": input_list('room type',list=['Single Bed','Double Bed','Double Superior','Suite'], required=True, multiple=False),
-            "room_number": input_number('room number',required=True, min=10,max=20),
-            "description": input_string('description', required=False),
-            "price": input_number('price', required=False),
-            
-            "offer": input_number('room offer',required=False, min=0,max=100),
+            "room_type": input_list('room type',list=['Single Bed','Double Bed','Double Superior','Suite']),
+            "room_number": input_number('room number', min=10,max=20),
+            "description": input_string('description'),
+            "price": input_number('price'),
+            "offer": input_number('room offer', min=0,max=100),
             "cancellation": input('Enter the cancellation policy: '),
-            "amenities": validate_multiple_values_in_list('amenity',required=False,list=cls.getAmenities(connection)),
-            "available": validate_booleans('available', required=False)
+            "amenities": input_list('amenity',list=cls.getAmenities(connection),multiple=True),
+            "available": input_boolean('available')
         }
 
         room = Room(data)

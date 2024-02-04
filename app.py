@@ -8,7 +8,7 @@ from src.utils.validations import decimal_default
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-action', type=str, required=True, choices=['read-bookings','read-rooms','read-users','read-room',
-                    'read-booking','read-user','update-room','create-room','delete-room'])
+                    'read-booking','read-user','update-room','create-room','create-user','delete-room'])
 args = parser.parse_args()
 
 connect = connection()
@@ -64,6 +64,10 @@ def createRoom():
     
     Room.create(connect)
 
+def createUser():
+
+    User.create()
+
 def deleteRoom():
     
     roomId = input('Introduce id of room: ')
@@ -77,6 +81,6 @@ def deleteRoom():
 
 actions = {'read-rooms' : readRooms,'read-bookings' : readBookings,'read-users' : readUsers, 'read-room': roomById,
             'read-booking': bookingById, 'read-user': userById, 'update-room' : updateRoom, 'create-room': createRoom,
-            'delete-room': deleteRoom}
+            'create-user': createUser, 'delete-room': deleteRoom}
 
 actions[args.action]()

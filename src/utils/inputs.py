@@ -1,9 +1,7 @@
-
 from .validations import (validate_number, validate_string, validate_value_required,
-                        validate_boolean,validate_value_in_list)
+                        validate_boolean,validate_value_in_list,validate_regex)
 
-
-def input_number(value_type:str,required: bool,min:int = None, max:int = None):
+def input_number(value_type:str,required: bool = False,min:int = None, max:int = None):
 
     while True:
 
@@ -23,7 +21,7 @@ def input_number(value_type:str,required: bool,min:int = None, max:int = None):
             print(e)
 
 
-def input_string(value_type: str, required:bool, length: int = 255):
+def input_string(value_type: str, required:bool = False, length: int = 255):
 
     while True:
 
@@ -42,7 +40,7 @@ def input_string(value_type: str, required:bool, length: int = 255):
             print(e)
 
 
-def input_boolean(value_type: str):
+def input_boolean(value_type: str, required: bool = False):
 
     while True:
 
@@ -60,7 +58,7 @@ def input_boolean(value_type: str):
         except ValueError as e:
             print(e)
 
-def input_list(value_type : str,required: bool,list: list, multiple: bool):
+def input_list(value_type : str,list: list, multiple: bool = False,required: bool = False):
 
     print('This is the list of %s you have to follow' % (value_type))
     for item in list:
@@ -91,3 +89,60 @@ def input_list(value_type : str,required: bool,list: list, multiple: bool):
         except ValueError as e:
             print(e)
     pass
+
+def input_phone(value_type: str, required:bool = False):
+
+    regex = r"[6-9][0-9]{2} [0-9]{3} [0-9]{3}"
+
+    while True:
+
+        try:
+
+            data = input(f'Enter the {value_type}:([6-9]99 999 999)')
+
+            if required:
+                validate_value_required(data)
+            
+            if data:
+                validate_regex(data,regex=regex)
+            
+            return data
+        
+        except ValueError as e:
+            print(e)
+
+def input_email(required: bool = False):
+
+    regex_email = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+
+    while True:
+
+        try:
+            data = input('Enter the email: ')
+
+            if required:
+                validate_value_required(data)
+            
+            if data:
+                validate_regex(data,regex_email)
+
+            return data
+            
+        except ValueError as e:
+            print(e)
+
+def input_date(value_type,required:bool = False):
+    
+    while True:
+        try:
+            data = input(f'Enter the {value_type}:(YYYY-MM-DD)')
+            
+            if required:
+                validate_value_required(data)
+            
+            if data:
+                validate_regex(data,regex=regex_date)
+
+
+        except ValueError as e:
+            print(e)

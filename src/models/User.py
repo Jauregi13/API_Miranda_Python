@@ -1,6 +1,9 @@
 from datetime import date
+import random
 from typing import Union
 from .Model import Model
+from ..utils.inputs import input_string,input_boolean, input_phone,input_email
+
 
 class User(Model):
 
@@ -25,6 +28,11 @@ class User(Model):
         id = random.randint(10000,99999)
 
         data = {
-            "user_id" : id
+            "user_id" : id,
+            "name": input_string('name',length=30),
+            "email": input_email(),
+            "description": input_string('description'),
+            "contact": input_phone('contact'),
+            "active": input_boolean('active')
         }
 
