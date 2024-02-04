@@ -1,5 +1,6 @@
 from .validations import (validate_number, validate_string, validate_value_required,
-                        validate_boolean,validate_value_in_list,validate_regex)
+                        validate_boolean,validate_value_in_list,validate_regex,validate_date, validate_url)
+
 
 def input_number(value_type:str,required: bool = False,min:int = None, max:int = None):
 
@@ -141,8 +142,27 @@ def input_date(value_type,required:bool = False):
                 validate_value_required(data)
             
             if data:
-                validate_regex(data,regex=regex_date)
+                validate_date(data)
+            
+            return data
 
 
+        except ValueError as e:
+            print(e)
+
+def input_url(value_type, required:bool = False):
+
+    while True:
+        try:
+            data = input(f'Enter the {value_type} url: ')
+
+            if required:
+                validate_value_required(data)
+            
+            if data:
+                validate_url(data)
+            
+            return data
+        
         except ValueError as e:
             print(e)

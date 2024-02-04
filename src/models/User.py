@@ -2,7 +2,7 @@ from datetime import date
 import random
 from typing import Union
 from .Model import Model
-from ..utils.inputs import input_string,input_boolean, input_phone,input_email
+from ..utils.inputs import input_string,input_boolean, input_phone,input_email, input_date, input_url
 
 
 class User(Model):
@@ -30,7 +30,9 @@ class User(Model):
         data = {
             "user_id" : id,
             "name": input_string('name',length=30),
+            "user_image": input_url('image'),
             "email": input_email(),
+            "start_date": input_date('start_date'), 
             "description": input_string('description'),
             "contact": input_phone('contact'),
             "active": input_boolean('active')

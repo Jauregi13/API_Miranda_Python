@@ -1,5 +1,7 @@
 from decimal import Decimal
 import re
+from datetime import datetime
+from urllib.parse import urlparse
 
 def decimal_default(obj):
     if isinstance(obj, Decimal):
@@ -13,7 +15,6 @@ def validate_value_required(data):
 
 
 def validate_number(value: int, min: int, max: int):
-    
 
     if (min and value < min) or (max and value > max):
         raise ValueError(f'This number is not within the established range ({min},{max})')
@@ -51,3 +52,16 @@ def validate_regex(value: str, regex: str):
     
     if not(re.fullmatch(regex,value)):
         raise ValueError(f'{value} does not match the format')
+
+def validate_date(value):
+
+   datetime.fromisoformat(value)
+
+def validate_url(value):
+
+    url = urlparse(value)
+
+    if not(all([url.scheme,url.netloc])):
+        raise ValueError(f'{value} is not a valid url')
+
+    
