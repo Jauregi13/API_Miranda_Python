@@ -52,9 +52,9 @@ def input_boolean(value_type: str, required: bool = False):
                 validate_value_required(data)
 
             if data:
-                validate_boolean(data)
+                result = validate_boolean(data)
             
-            return data
+            return result
         
         except ValueError as e:
             print(e)

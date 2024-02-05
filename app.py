@@ -4,11 +4,11 @@ from src.utils.connectionMySQL import connection
 from src.models.Room import Room
 from src.models.Booking import Booking
 from src.models.User import User
-from src.utils.validations import decimal_default
+from src.utils.validations import format_date, format_decimal
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-action', type=str, required=True, choices=['read-bookings','read-rooms','read-users','read-room',
-                    'read-booking','read-user','update-room','create-room','create-user','delete-room'])
+                    'read-booking','read-user','update-room','update-user','create-room','create-user','delete-room'])
 args = parser.parse_args()
 
 connect = connection()
@@ -17,13 +17,19 @@ def readRooms():
     
     rooms = Room.list(connect)
 
-    print(json.dumps(rooms,indent=4,default=decimal_default))
+    print(json.dumps(rooms,indent=4,default=format_decimal))
     
 def readBookings():
-    print(Booking.list())
+
+    bookings = Booking.list(connect)
+    print(json.dumps(bookings,indent=4,default=format_date))
 
 def readUsers():
-    print(User.list())
+
+    users = User.list(connect)
+    '''for user in users:
+        print(type(str(user['start_date'])))'''
+    print(json.dumps(users,indent=4,default=format_date))
 
 def roomById():
 
@@ -31,7 +37,7 @@ def roomById():
     room = Room.view(roomId,connect)
 
     if room:
-        print(json.dumps(room,indent=4,default=decimal_default))
+        print(json.dumps(room,indent=4,default=format_decimal))
     else:
         print('id of room not exist')
 
@@ -60,6 +66,17 @@ def updateRoom():
     else:
         print('id of room not exist')
 
+def updateUser():
+
+    userId = input('Introduce id of user: ')
+    userExist = User.view(userId,connection=connect)
+
+    if userExist:
+        User.update(id=userExist['room_id'])
+    else:
+        print('id of user not exist')
+
+
 def createRoom():
     
     Room.create(connect)
@@ -80,7 +97,7 @@ def deleteRoom():
 
 
 actions = {'read-rooms' : readRooms,'read-bookings' : readBookings,'read-users' : readUsers, 'read-room': roomById,
-            'read-booking': bookingById, 'read-user': userById, 'update-room' : updateRoom, 'create-room': createRoom,
-            'create-user': createUser, 'delete-room': deleteRoom}
+            'read-booking': bookingById, 'read-user': userById, 'update-room' : updateRoom, 'update-user': updateUser,
+            'create-room': createRoom,'create-user': createUser, 'delete-room': deleteRoom}
 
 actions[args.action]()

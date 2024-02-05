@@ -38,3 +38,30 @@ class User(Model):
             "active": input_boolean('active')
         }
 
+        user = User(data)
+
+        super(User,user).create()
+
+    @classmethod
+    def update(cls,id):
+
+        print('-----UPDATE USER------------')
+        print('To update the data, enter information into the inputs; otherwise, leave them blank')
+
+        data = {
+            "user_id" : id,
+            "name": input_string('name',length=30),
+            "user_image": input_url('image'),
+            "email": input_email(),
+            "start_date": input_date('start_date'), 
+            "description": input_string('description'),
+            "contact": input_phone('contact'),
+            "active": input_boolean('active')
+        }
+
+        user = User(data)
+
+        super(User,user).update()
+        
+
+

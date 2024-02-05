@@ -1,9 +1,14 @@
 from decimal import Decimal
 import re
-from datetime import datetime
+from datetime import datetime, date
 from urllib.parse import urlparse
 
-def decimal_default(obj):
+def format_date(obj):
+    if isinstance(obj, date):
+        return str(obj)
+    raise TypeError("Object of type {} is not JSON serializable".format(type(obj)))
+
+def format_decimal(obj):
     if isinstance(obj, Decimal):
         return float(obj)
     raise TypeError("Object of type {} is not JSON serializable".format(type(obj)))

@@ -31,10 +31,10 @@ class Model(ABC):
 
         connect = connection()
         cursor = connect.cursor(dictionary=True)
-        columns = ','.join(column for column in self.fields.keys() if self.fields[column] != '')
+        columns = ','.join(column for column in self.__dict__.keys() if self.__dict__[column] != '')
         values = ','.join(
             "'{}'".format(json.dumps(value)) if isinstance(value,list) else 
-           "'{}'".format(value) if isinstance(value,str) else str(value) for value in self.fields.values() if value != '')
+           "'{}'".format(value) if isinstance(value,str) else str(value) for value in self.__dict__.values() if value != '')
         query = f'INSERT INTO %s (%s) VALUES (%s)' % (self.tableName,columns,values)
 
         cursor.execute(query)
